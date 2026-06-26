@@ -1,5 +1,6 @@
 package com.jozo.multitenancy2.bookmark;
 
+import com.jozo.multitenancy2.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -25,5 +26,9 @@ public class Bookmark {
     private String description;
 
     private LocalDateTime created = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id",nullable = false)
+    private User user;
 
 }
