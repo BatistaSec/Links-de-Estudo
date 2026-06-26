@@ -1,12 +1,9 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
-
 name: maven-publish
 
 on:
   push:
     branches:
-      - '**'        # 👈 roda em qualquer branch
+      - '**'        # roda em qualquer branch
   pull_request:
     branches:
       - main
@@ -24,6 +21,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: 'maven'
 
-      - name: Rodar os testes
-        run: mvn test
+      - name: Rodar testes com Maven
+        run: mvn -B test
