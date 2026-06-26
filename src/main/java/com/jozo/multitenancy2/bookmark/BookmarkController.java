@@ -1,10 +1,12 @@
 package com.jozo.multitenancy2.bookmark;
 
+import com.jozo.multitenancy2.Scaper.ScraperService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -12,10 +14,12 @@ import java.util.Optional;
 public class BookmarkController  {
 
     private final BookmarkService service;
+    private  final ScraperService scraperService;
 
 
-    public BookmarkController(BookmarkService service) {
+    public BookmarkController(BookmarkService service, ScraperService scraperService) {
         this.service = service;
+        this.scraperService = scraperService;
     }
 
     @GetMapping
@@ -33,9 +37,11 @@ public class BookmarkController  {
         }
     }
     @PostMapping
-    public ResponseEntity<Bookmark> save(@RequestBody Bookmark bookmark) {
-        Bookmark savedBookmark = service.save(bookmark);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBookmark);
+    public ResponseEntity<Bookmark> save(@RequestBody Map<String, String> payload) {
+        String url = payload.get("url");
+        Bookmark bookmark = scraperService.fetchBookmark(url);
+        Bookmark saved = service.save(bookmark);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @DeleteMapping("/{id}")
@@ -49,4 +55,5 @@ public class BookmarkController  {
         return ResponseEntity.ok(update);
 
     }
+
 }
