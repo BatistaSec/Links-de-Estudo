@@ -24,6 +24,9 @@ class BookmarkControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private BookmarkRepository bookmarkRepository;
+
     @Test
     void deveRetornarListaBookmarks() throws Exception {
         mockMvc.perform(get("/api/bookmarks")
@@ -34,15 +37,22 @@ class BookmarkControllerTest {
 
     @Test
     void deveRetornarListaBookmarksById() throws Exception {
-        mockMvc.perform(get("/api/bookmarks/1")
+        Bookmark bookmark = new Bookmark();
+        bookmark.setUrl("https://spring.io");
+        bookmark.setTitle("Spring");
+        bookmark = bookmarkRepository.save(bookmark);
+
+        mockMvc.perform(get("/api/bookmarks/" + bookmark.getId())
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Spring"))
+                .andExpect(jsonPath("$.url").value("https://spring.io"));
 
     }
 
     @Test
     void deveCriarBookmarkComSucesso()throws Exception {
-        String json =  "{\"url\":\"https://spring.io\", \"title\":\"Spring\"}";
+        String json =  "{\"url\":\"https://spring.io\"}";
         mockMvc.perform(post("/api/bookmarks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
@@ -51,7 +61,12 @@ class BookmarkControllerTest {
 
     @Test
     void deveExcluirBookmarkComSucesso()throws Exception {
-        mockMvc.perform(delete("/api/bookmarks/1")
+        Bookmark bookmark = new Bookmark();
+        bookmark.setUrl("https://spring.io");
+        bookmark.setTitle("Spring");
+        bookmark = bookmarkRepository.save(bookmark);
+
+        mockMvc.perform(delete("/api/bookmarks/" + bookmark.getId())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -59,9 +74,14 @@ class BookmarkControllerTest {
 
     @Test
     void deveAtualizarBookmarkComSucesso()throws Exception {
+        Bookmark bookmark = new Bookmark();
+        bookmark.setUrl("https://spring.io");
+        bookmark.setTitle("Spring");
+        bookmark = bookmarkRepository.save(bookmark);
+
         String json = "{\"url\":\"https://spring.io/projects\", \"title\":\"Spring Updated\"}";
 
-        mockMvc.perform(put("/api/bookmarks/1")
+        mockMvc.perform(put("/api/bookmarks/" + bookmark.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
