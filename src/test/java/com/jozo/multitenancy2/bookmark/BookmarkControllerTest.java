@@ -7,8 +7,13 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -20,11 +25,19 @@ class BookmarkControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void getAllBookmarks() {
+    void deveRetornarListaBookmarks() throws Exception {
+        mockMvc.perform(get("/api/bookmarks")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
     }
 
     @Test
-    void getBookmarkById() {
+    void deveRetornarListaBookmarksById() throws Exception {
+        mockMvc.perform(get("/api/bookmarks/1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -37,10 +50,23 @@ class BookmarkControllerTest {
     }
 
     @Test
-    void delete() {
+    void deveExcluirBookmarkComSucesso()throws Exception {
+        mockMvc.perform(delete("/api/bookmarks/1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
     }
 
     @Test
-    void update() {
+    void deveAtualizarBookmarkComSucesso()throws Exception {
+        String json = "{\"url\":\"https://spring.io/projects\", \"title\":\"Spring Updated\"}";
+
+        mockMvc.perform(put("/api/bookmarks/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Spring Updated"))
+                .andExpect(jsonPath("$.url").value("https://spring.io/projects"));
+
     }
 }

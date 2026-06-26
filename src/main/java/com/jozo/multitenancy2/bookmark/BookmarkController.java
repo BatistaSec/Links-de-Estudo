@@ -43,7 +43,7 @@ public class BookmarkController  {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<Bookmark> update(@PathVariable long id, @RequestBody Bookmark bookmark) {
         Bookmark update = service.update(id,bookmark);
         return ResponseEntity.ok(update);
