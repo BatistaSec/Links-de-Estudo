@@ -30,11 +30,38 @@ A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagge
 > 🔒 **Demonstração de Segurança & Cadastro (JWT / LGPD):**  
 > Toda a arquitetura de segurança (Spring Security 7, filtros de autenticação, geração e validação de tokens JWT, registro e login de usuários) está **100% implementada** no código do projeto (nos pacotes `security` e `user`).  
 > Por questões de **privacidade e conformidade com a LGPD**, o cadastro e o login de usuários reais foram desativados na demonstração pública hospedada no Render (retornando o código `405 Method Not Allowed`).  
-> Caso deseje reativar o fluxo completo em seu fork:
-> 1. No arquivo `SecuritySecurity.java`, descomente a linha do filtro JWT: `.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)`.
-> 2. No arquivo `BookmarkController.java`, dentro do método `getEmail`, descomente a linha: `return principal.getName()`.
-> 3. No arquivo `UserController.java`, comente o retorno de teste e descomente o corpo original dos métodos `register` e `login`.
-> 4. No arquivo `SecuritySecurity.java`, configure as rotas protegidas (por exemplo, removendo a linha de liberação pública `/api/bookmarks/**`).
+> 
+> Para reativar o fluxo completo de autenticação e proteção em seu fork local, siga estes passos:
+> 
+> 1. **Ativar o Filtro JWT no Spring Security** (`SecuritySecurity.java`):
+>    ```java
+>    // Remova o ';' do final de .anyRequest().authenticated() e descomente a linha do filtro:
+>    .anyRequest().authenticated()
+>    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+>    
+>    // (Opcional) Remova a linha abaixo para bloquear acesso anônimo aos bookmarks:
+>    // .requestMatchers("/api/bookmarks/**").permitAll()
+>    ```
+> 
+> 2. **Habilitar a captura do usuário autenticado** (`BookmarkController.java`):
+>    ```java
+>    private String getEmail(Principal principal) {
+>        // Comente a linha de teste e descomente a de produção:
+>        // return "teste@email.com";
+>        return principal != null ? principal.getName() : "teste@email.com";
+>    }
+>    ```
+> 
+> 3. **Reativar endpoints de Cadastro/Login** (`UserController.java`):
+>    ```java
+>    @PostMapping("/register")
+>    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+>        // Comente o retorno 405 de teste e descomente o restante do método:
+>        // return ResponseEntity.status(405).body("...");
+>        User user = User.builder().email(request.email()).senha(passwordEncoder.encode(request.senha())).build();
+>        return ResponseEntity.ok(userRepository.save(user));
+>    }
+>    ```
 
 ---
 
