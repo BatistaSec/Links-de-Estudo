@@ -28,23 +28,25 @@ public class BookmarkController  {
     }
 
     @GetMapping
-    public ResponseEntity<List<Bookmark>> getAllBookmarks(Principal principal) {
+    public ResponseEntity<List<BookmarkResponse>> getAllBookmarks(Principal principal) {
         String email = principal.getName();
-        List<Bookmark> bookmarks = service.findAll();
+        List<BookmarkResponse> bookmarks = service.findAll().stream()
+                .map(this::toResponse)
+                .toList();
         return ResponseEntity.ok(bookmarks);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Bookmark> getBookmarkById(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<BookmarkResponse> getBookmarkById(@PathVariable Long id, Principal principal) {
         try {
             String email = principal.getName();
             Bookmark bookmark = service.findById(id);
-            return ResponseEntity.ok(bookmark);
+            return ResponseEntity.ok(toResponse(bookmark));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
     @PostMapping
-    public ResponseEntity<Bookmark> save(@RequestBody Map<String, String> payload,
+    public ResponseEntity<BookmarkResponse> save(@RequestBody Map<String, String> payload,
                                          Principal principal) {
         String email = principal.getName();
         String url = payload.get("url");
@@ -55,7 +57,7 @@ public class BookmarkController  {
         bookmark.setUser(user);
 
         Bookmark saved = service.save(bookmark);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
     @DeleteMapping("/{id}")
@@ -65,11 +67,22 @@ public class BookmarkController  {
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Bookmark> update(@PathVariable long id, @RequestBody Bookmark bookmark, Principal principal) {
+    public ResponseEntity<BookmarkResponse> update(@PathVariable long id, @RequestBody Bookmark bookmark, Principal principal) {
         String email = principal.getName();
         Bookmark update = service.update(id,bookmark);
-        return ResponseEntity.ok(update);
+        return ResponseEntity.ok(toResponse(update));
+    }
 
+    private BookmarkResponse toResponse(Bookmark bookmark) {
+        return new BookmarkResponse(
+                bookmark.getId(),
+                bookmark.getUrl(),
+                bookmark.getTitle(),
+                bookmark.getDescription(),
+                bookmark.getCreated(),
+                bookmark.getUser() != null ? bookmark.getUser().getId() : null,
+                bookmark.getUser() != null ? bookmark.getUser().getEmail() : null
+        );
     }
 
 }
