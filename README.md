@@ -24,7 +24,12 @@ A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagge
 
 👉 **URL do Swagger UI:** [https://links-de-estudo.onrender.com/swagger-ui/index.html](https://links-de-estudo.onrender.com/swagger-ui/index.html)
 
-> 💡 **Dica de Teste:** O Swagger suporta o fluxo completo. Cadastre um usuário em `/api/auth/register`, faça o login em `/api/auth/login`, copie o token gerado, clique no botão **"Authorize"** no topo da tela do Swagger, cole o token e teste os endpoints protegidos `/api/bookmarks/**`.
+> ⚡ **Acesso Simplificado para Testes:**  
+> Para facilitar a avaliação por recrutadores e visitantes, as rotas de bookmarks `/api/bookmarks/**` estão configuradas em **modo permissivo** (abertas ao público sem necessidade de cabeçalhos ou tokens de login). Toda requisição anônima utilizará automaticamente um usuário de testes padrão (`teste@email.com`).
+> 
+> 🔒 **Demonstração de Segurança (JWT):**  
+> Embora o acesso esteja simplificado, toda a arquitetura de segurança (Spring Security 7, filtros de autenticação, geração e validação de tokens JWT) está **100% implementada** no projeto. Você ainda pode cadastrar um usuário, fazer login para obter o Token JWT, e enviá-lo no Swagger (botão **"Authorize"**). A API validará o token normalmente!  
+> Para reativar a obrigatoriedade de login nas rotas, basta remover a linha `.requestMatchers("/api/bookmarks/**").permitAll()` do arquivo `SecuritySecurity.java`.
 
 ---
 
