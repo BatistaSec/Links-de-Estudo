@@ -27,18 +27,22 @@ A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagge
 > ⚡ **Acesso Simplificado para Testes:**  
 > Para facilitar a avaliação por recrutadores e visitantes, as rotas de bookmarks `/api/bookmarks/**` estão configuradas em **modo permissivo** (abertas ao público sem necessidade de cabeçalhos ou tokens de login). Toda requisição anônima utilizará automaticamente um usuário de testes padrão (`teste@email.com`).
 > 
-> 🔒 **Demonstração de Segurança (JWT):**  
-> Toda a arquitetura de segurança (Spring Security 7, filtros de autenticação, geração e validação de tokens JWT) está **100% implementada** no código do projeto (no pacote `security`), mas por questões de facilidade de testes ela está comentada e desativada.  
-> Caso deseje ativar a autenticação obrigatória por JWT no seu fork:
+> 🔒 **Demonstração de Segurança & Cadastro (JWT / LGPD):**  
+> Toda a arquitetura de segurança (Spring Security 7, filtros de autenticação, geração e validação de tokens JWT, registro e login de usuários) está **100% implementada** no código do projeto (nos pacotes `security` e `user`).  
+> Por questões de **privacidade e conformidade com a LGPD**, o cadastro e o login de usuários reais foram desativados na demonstração pública hospedada no Render (retornando o código `405 Method Not Allowed`).  
+> Caso deseje reativar o fluxo completo em seu fork:
 > 1. No arquivo `SecuritySecurity.java`, descomente a linha do filtro JWT: `.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)`.
 > 2. No arquivo `BookmarkController.java`, dentro do método `getEmail`, descomente a linha: `return principal.getName()`.
-> 3. No arquivo `SecuritySecurity.java`, configure as rotas protegidas (por exemplo, removendo a linha de liberação pública `/api/bookmarks/**`).
+> 3. No arquivo `UserController.java`, comente o retorno de teste e descomente o corpo original dos métodos `register` e `login`.
+> 4. No arquivo `SecuritySecurity.java`, configure as rotas protegidas (por exemplo, removendo a linha de liberação pública `/api/bookmarks/**`).
 
 ---
 
 ## 🔑 Endpoints Principais
 
 ### Autenticação (Opcional - JWT)
+*Estes endpoints estão desativados na demonstração pública por motivos de conformidade com a LGPD.*
+
 | Método | Endpoint | Descrição | Exemplo de Payload (Request) |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/auth/register` | Cria uma nova conta de usuário. | `{"email": "teste@email.com", "senha": "123"}` |
