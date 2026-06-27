@@ -28,22 +28,19 @@ A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagge
 > Para facilitar a avaliação por recrutadores e visitantes, as rotas de bookmarks `/api/bookmarks/**` estão configuradas em **modo permissivo** (abertas ao público sem necessidade de cabeçalhos ou tokens de login). Toda requisição anônima utilizará automaticamente um usuário de testes padrão (`teste@email.com`).
 > 
 > 🔒 **Demonstração de Segurança (JWT):**  
-> Embora o acesso esteja simplificado, toda a arquitetura de segurança (Spring Security 7, filtros de autenticação, geração e validação de tokens JWT) está **100% implementada** no projeto. Você ainda pode cadastrar um usuário, fazer login para obter o Token JWT, e enviá-lo no Swagger (botão **"Authorize"**). A API validará o token normalmente!  
-> Para reativar a obrigatoriedade de login nas rotas, basta remover a linha `.requestMatchers("/api/bookmarks/**").permitAll()` do arquivo `SecuritySecurity.java`.
+> Toda a arquitetura de segurança (Spring Security 7, filtros de autenticação, geração e validação de tokens JWT) está **100% implementada** no código do projeto (no pacote `security`). Se você desejar ativar a obrigatoriedade de autenticação por JWT nas rotas no seu próprio fork, basta remover a linha `.requestMatchers("/api/bookmarks/**").permitAll()` do arquivo `SecuritySecurity.java`.
 
 ---
 
 ## 🔑 Endpoints Principais
 
-### Autenticação (Públicos)
+### Autenticação (Opcional - JWT)
 | Método | Endpoint | Descrição | Exemplo de Payload (Request) |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/auth/register` | Cria uma nova conta de usuário. | `{"email": "teste@email.com", "senha": "123"}` |
 | `POST` | `/api/auth/login` | Autentica e retorna o Token JWT. | `{"email": "teste@email.com", "senha": "123"}` |
 
-### Bookmarks (Protegidos por Token JWT)
-*É necessário enviar o cabeçalho `Authorization: Bearer <seu_token>` nas rotas abaixo.*
-
+### Bookmarks (Acesso Público para Testes)
 | Método | Endpoint | Descrição | Exemplo de Payload (Request) |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/bookmarks` | Lista todos os bookmarks cadastrados. | *Nenhum* |
@@ -56,78 +53,53 @@ A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagge
 
 ## 💻 Exemplos de Consumo (Como consumir a API)
 
-Abaixo estão trechos de código prontos demonstrando como fazer login na API e consumir a lista de bookmarks usando **JavaScript**, **Python** e **Java**.
+Abaixo estão trechos de código demonstrando como interagir com os endpoints de bookmarks usando **JavaScript**, **Python** e **Java**.
 
-### 1. JavaScript (Fetch API / Frontend - Fluxo Completo)
+### 1. JavaScript (Fetch API / Frontend)
 ```javascript
 const API_URL = "https://links-de-estudo.onrender.com";
 
-async function executarFluxoCompleto() {
-  // Gera um e-mail único usando o timestamp para evitar erros de e-mail duplicado
-  const email = `dev_${Date.now()}@email.com`;
-  const senha = "minha_senha_123";
-
-  console.log("1. Cadastrando novo usuário: ", email);
-  
-  // 1. Registrar o usuário
-  const resRegister = await fetch(`${API_URL}/api/auth/register`, {
+// Envia uma URL para a API extrair metadados e salvar o bookmark
+async function cadastrarBookmark(url) {
+  const response = await fetch(`${API_URL}/api/bookmarks`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, senha })
+    body: JSON.stringify({ url })
   });
+  
+  const data = await response.json();
+  console.log("✅ Bookmark cadastrado:", data);
+  return data;
+}
 
-  if (resRegister.ok) {
-    console.log("✅ Usuário cadastrado com sucesso!");
-    
-    // 2. Realizar o login para obter o Token JWT
-    console.log("2. Realizando login...");
-    const resLogin = await fetch(`${API_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, senha })
-    });
-    
-    const token = await resLogin.text();
-    console.log("✅ Autenticado! Token JWT obtido:", token);
-    return token;
-  } else {
-    console.error("❌ Falha no cadastro:", await resRegister.text());
-  }
+// Lista todos os bookmarks cadastrados no sistema
+async function obterBookmarks() {
+  const response = await fetch(`${API_URL}/api/bookmarks`);
+  const data = await response.json();
+  console.log("Bookmarks cadastrados:", data);
+  return data;
 }
 ```
 
-### 2. Python (Requests Library - Fluxo Completo)
+### 2. Python (Requests Library)
 ```python
 import requests
-import time
 
 API_URL = "https://links-de-estudo.onrender.com"
 
-def testar_fluxo_completo():
-    # Gera um e-mail único para evitar erro de usuário duplicado
-    email = f"dev_{int(time.time())}@email.com"
-    senha = "minha_senha_123"
+# Envia uma URL para a API extrair metadados e cadastrar
+def cadastrar_bookmark(url):
+    payload = {"url": url}
+    response = requests.post(f"{API_URL}/api/bookmarks", json=payload)
+    return response.json()
 
-    print(f"1. Cadastrando novo usuário: {email}")
-    payload = {"email": email, "senha": senha}
-    
-    # 1. Registrar
-    response_reg = requests.post(f"{API_URL}/api/auth/register", json=payload)
-    if response_reg.status_code in [200, 201]:
-        print("✅ Usuário cadastrado com sucesso!")
-        
-        # 2. Login
-        print("2. Realizando login...")
-        response_log = requests.post(f"{API_URL}/api/auth/login", json=payload)
-        if response_log.status_code == 200:
-            token = response_log.text
-            print(f"✅ Autenticado! Token JWT obtido:\n{token}")
-            return token
-            
-    print("❌ Falha no fluxo de testes.")
+# Lista todos os bookmarks cadastrados
+def listar_bookmarks():
+    response = requests.get(f"{API_URL}/api/bookmarks")
+    return response.json()
 ```
 
-### 3. Java (HttpClient nativo - Fluxo Completo)
+### 3. Java (HttpClient nativo - Java 11+)
 ```java
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -138,33 +110,22 @@ public class ApiClient {
     private static final String API_URL = "https://links-de-estudo.onrender.com";
 
     public static void main(String[] args) throws Exception {
-        // Gera um e-mail único baseado no timestamp atual
-        String email = "dev_" + System.currentTimeMillis() + "@email.com";
-        String senha = "minha_senha_123";
-        String payload = String.format("{\"email\":\"%s\",\"senha\":\"%s\"}", email, senha);
-        
         HttpClient client = HttpClient.newHttpClient();
+        String payload = "{\"url\":\"https://spring.io\"}";
         
-        System.out.println("1. Cadastrando novo usuário: " + email);
-        // 1. Registrar Usuário
-        HttpRequest requestReg = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + "/api/auth/register"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(payload))
-                .build();
-        client.send(requestReg, HttpResponse.BodyHandlers.discarding());
-        System.out.println("✅ Usuário cadastrado!");
-
-        System.out.println("2. Realizando login...");
-        // 2. Fazer Login para obter o Token JWT
-        HttpRequest requestLog = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + "/api/auth/login"))
+        System.out.println("Enviando requisição de cadastro de bookmark...");
+        
+        // Requisição POST para criar o Bookmark
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL + "/api/bookmarks"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build();
         
-        HttpResponse<String> response = client.send(requestLog, HttpResponse.BodyHandlers.ofString());
-        System.out.println("✅ Autenticado! Token JWT: " + response.body());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        
+        System.out.println("✅ Resposta do Servidor:");
+        System.out.println(response.body());
     }
 }
 ```
