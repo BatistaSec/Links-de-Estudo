@@ -172,3 +172,12 @@ Para publicar este projeto gratuitamente:
     *   `DATABASE_USERNAME`: `seu-usuario-do-neon`
     *   `DATABASE_PASSWORD`: `sua-senha-do-neon`
 5.  Clique em **Create Web Service**.
+
+---
+
+## 💬 Feedback e Sugestões
+
+Se você testou a API, tem alguma sugestão de melhoria, encontrou algum bug ou quer deixar um feedback, a sua contribuição é muito bem-vinda!
+
+*   **Feedback & Bugs:** Abra uma [Issue no GitHub](https://github.com/BatistaSec/Links-de-Estudo/issues) para compartilhar suas sugestões ou relatar problemas.
+*   **Novos Recursos:** Fique à vontade para fazer um fork do projeto e abrir um Pull Request com suas implementações!
