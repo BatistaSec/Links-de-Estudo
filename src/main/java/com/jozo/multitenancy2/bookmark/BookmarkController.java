@@ -67,9 +67,12 @@ public class BookmarkController  {
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{id}")
-    public ResponseEntity<BookmarkResponse> update(@PathVariable long id, @RequestBody Bookmark bookmark, Principal principal) {
+    public ResponseEntity<BookmarkResponse> update(@PathVariable long id, @RequestBody Map<String, String> payload, Principal principal) {
         String email = getEmail(principal);
-        Bookmark update = service.update(id,bookmark);
+        Bookmark bookmark = new Bookmark();
+        bookmark.setUrl(payload.get("url"));
+        bookmark.setTitle(payload.get("title"));
+        Bookmark update = service.update(id, bookmark);
         return ResponseEntity.ok(toResponse(update));
     }
 

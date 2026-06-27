@@ -1,6 +1,7 @@
 package com.jozo.multitenancy2.user;
 
 import com.jozo.multitenancy2.security.JwtService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@Hidden
 public class UserController {
 
     private final AuthenticationManager authenticationManager;
