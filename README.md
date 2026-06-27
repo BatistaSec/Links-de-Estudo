@@ -2,6 +2,9 @@
 
 Uma **API RESTful** robusta e segura desenvolvida com **Java 21** e **Spring Boot 4.1.0** para gerenciamento e categorização de links de estudo (bookmarks). O sistema extrai metadados de qualquer link (como título e descrição) automaticamente utilizando Web Scraping, associando-os a usuários autenticados de forma segura.
 
+> ⚠️ **Aviso de Sandbox (Ambiente de Testes / LGPD):**  
+> Este é um projeto estritamente acadêmico com fins demonstrativos de portfólio. Para testar os endpoints da API (seja pelo Swagger UI ou pelos clientes), **utilize e-mails fictícios e senhas simples de teste**. Não forneça ou envie dados pessoais reais sob nenhuma circunstância.
+
 ---
 
 ## 🌟 Principais Recursos
