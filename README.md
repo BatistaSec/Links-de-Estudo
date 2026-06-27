@@ -50,63 +50,76 @@ A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagge
 
 Abaixo estão trechos de código prontos demonstrando como fazer login na API e consumir a lista de bookmarks usando **JavaScript**, **Python** e **Java**.
 
-### 1. JavaScript (Fetch API / Frontend)
+### 1. JavaScript (Fetch API / Frontend - Fluxo Completo)
 ```javascript
 const API_URL = "https://links-de-estudo.onrender.com";
 
-// 1. Fazer login e salvar o Token JWT
-async function login(email, senha) {
-  const response = await fetch(`${API_URL}/api/auth/login`, {
+async function executarFluxoCompleto() {
+  // Gera um e-mail único usando o timestamp para evitar erros de e-mail duplicado
+  const email = `dev_${Date.now()}@email.com`;
+  const senha = "minha_senha_123";
+
+  console.log("1. Cadastrando novo usuário: ", email);
+  
+  // 1. Registrar o usuário
+  const resRegister = await fetch(`${API_URL}/api/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, senha })
   });
-  
-  const token = await response.text();
-  localStorage.setItem("token", token);
-  console.log("Token salvo com sucesso!");
-  return token;
-}
 
-// 2. Buscar Bookmarks autenticados
-async function obterBookmarks() {
-  const token = localStorage.getItem("token");
-  const response = await fetch(`${API_URL}/api/bookmarks`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  });
-  
-  const data = await response.json();
-  console.log("Bookmarks:", data);
+  if (resRegister.ok) {
+    console.log("✅ Usuário cadastrado com sucesso!");
+    
+    // 2. Realizar o login para obter o Token JWT
+    console.log("2. Realizando login...");
+    const resLogin = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, senha })
+    });
+    
+    const token = await resLogin.text();
+    console.log("✅ Autenticado! Token JWT obtido:", token);
+    return token;
+  } else {
+    console.error("❌ Falha no cadastro:", await resRegister.text());
+  }
 }
 ```
 
-### 2. Python (Requests Library)
+### 2. Python (Requests Library - Fluxo Completo)
 ```python
 import requests
+import time
 
 API_URL = "https://links-de-estudo.onrender.com"
 
-# 1. Autenticar para obter o Token
-def obter_token(email, senha):
-    payload = {"email": email, "senha": senha}
-    response = requests.post(f"{API_URL}/api/auth/login", json=payload)
-    if response.status_code == 200:
-        return response.text
-    raise Exception("Falha na autenticação")
+def testar_fluxo_completo():
+    # Gera um e-mail único para evitar erro de usuário duplicado
+    email = f"dev_{int(time.time())}@email.com"
+    senha = "minha_senha_123"
 
-# 2. Criar um novo Bookmark
-def cadastrar_bookmark(token, url):
-    headers = {"Authorization": f"Bearer {token}"}
-    payload = {"url": url}
-    response = requests.post(f"{API_URL}/api/bookmarks", headers=headers, json=payload)
-    return response.json()
+    print(f"1. Cadastrando novo usuário: {email}")
+    payload = {"email": email, "senha": senha}
+    
+    # 1. Registrar
+    response_reg = requests.post(f"{API_URL}/api/auth/register", json=payload)
+    if response_reg.status_code in [200, 201]:
+        print("✅ Usuário cadastrado com sucesso!")
+        
+        # 2. Login
+        print("2. Realizando login...")
+        response_log = requests.post(f"{API_URL}/api/auth/login", json=payload)
+        if response_log.status_code == 200:
+            token = response_log.text
+            print(f"✅ Autenticado! Token JWT obtido:\n{token}")
+            return token
+            
+    print("❌ Falha no fluxo de testes.")
 ```
 
-### 3. Java (HttpClient nativo - Java 11+)
+### 3. Java (HttpClient nativo - Fluxo Completo)
 ```java
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -116,17 +129,34 @@ import java.net.http.HttpResponse;
 public class ApiClient {
     private static final String API_URL = "https://links-de-estudo.onrender.com";
 
-    public static String fazerLogin(String email, String senha) throws Exception {
+    public static void main(String[] args) throws Exception {
+        // Gera um e-mail único baseado no timestamp atual
+        String email = "dev_" + System.currentTimeMillis() + "@email.com";
+        String senha = "minha_senha_123";
         String payload = String.format("{\"email\":\"%s\",\"senha\":\"%s\"}", email, senha);
+        
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
+        
+        System.out.println("1. Cadastrando novo usuário: " + email);
+        // 1. Registrar Usuário
+        HttpRequest requestReg = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL + "/api/auth/register"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(payload))
+                .build();
+        client.send(requestReg, HttpResponse.BodyHandlers.discarding());
+        System.out.println("✅ Usuário cadastrado!");
+
+        System.out.println("2. Realizando login...");
+        // 2. Fazer Login para obter o Token JWT
+        HttpRequest requestLog = HttpRequest.newBuilder()
                 .uri(URI.create(API_URL + "/api/auth/login"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body(); // Retorna a String do Token JWT
+        
+        HttpResponse<String> response = client.send(requestLog, HttpResponse.BodyHandlers.ofString());
+        System.out.println("✅ Autenticado! Token JWT: " + response.body());
     }
 }
 ```
