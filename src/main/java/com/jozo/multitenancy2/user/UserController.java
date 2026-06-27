@@ -29,20 +29,30 @@ public class UserController {
     public record RegisterRequest(String email, String senha) {}
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        // Se desejar reativar o cadastro de usuários no seu fork, comente a linha abaixo e descomente o restante do método:
+        return ResponseEntity.status(405).body("Cadastro desativado na demonstração pública do portfólio por motivos de privacidade/LGPD.");
+        
+        /*
         User user = User.builder()
                 .email(request.email())
                 .senha(passwordEncoder.encode(request.senha()))
                 .build();
         User saved = userRepository.save(user);
         return ResponseEntity.ok(saved);
+        */
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        // Se desejar reativar o login de usuários no seu fork, comente a linha abaixo e descomente o restante do método:
+        return ResponseEntity.status(405).body("Login desativado na demonstração pública do portfólio.");
+
+        /*
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getSenha()));
 
         String token = jwtService.generateToken(loginRequest.getEmail());
         return ResponseEntity.ok(token);
+        */
     }
 }
