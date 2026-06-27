@@ -13,12 +13,21 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Multitenancy Bookmarks API")
+                        .version("1.0")
+                        .description("API para gerenciamento de bookmarks com multitenancy e autenticação JWT"));
+
+        /*
+        // Para reativar o botão 'Authorize' (JWT Bearer Auth) no Swagger UI,
+        // comente o retorno acima e descomente o bloco abaixo:
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info()
                         .title("Multitenancy Bookmarks API")
                         .version("1.0")
-                        .description("API para gerenciamento de bookmarks com multitenancy e autenticação JWT"))
+                        .description("API para gerenciamento de bookmarks com autenticação JWT"))
                 .addSecurityItem(new SecurityRequirement()
                         .addList(securitySchemeName))
                 .components(new Components()
@@ -27,5 +36,6 @@ public class OpenApiConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")));
+        */
     }
 }

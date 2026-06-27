@@ -62,6 +62,17 @@ A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagge
 >        return ResponseEntity.ok(userRepository.save(user));
 >    }
 >    ```
+> 
+> 4. **Ativar o botão "Authorize" no Swagger UI** (`OpenApiConfig.java`):
+>    ```java
+>    @Bean
+>    public OpenAPI customOpenAPI() {
+>        // Comente o retorno simples e descomente o retorno completo comentado com 'bearerAuth'
+>        // return new OpenAPI().info(...);
+>        final String securitySchemeName = "bearerAuth";
+>        return new OpenAPI().info(...).addSecurityItem(...);
+>    }
+>    ```
 
 ---
 
