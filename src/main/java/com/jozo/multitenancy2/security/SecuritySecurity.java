@@ -42,8 +42,9 @@ public class SecuritySecurity {
                         .requestMatchers("/api/bookmarks/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                );
+                // Para reativar a autenticação obrigatória por Token JWT, comente o ponto e vírgula acima e descomente a linha abaixo:
+                // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

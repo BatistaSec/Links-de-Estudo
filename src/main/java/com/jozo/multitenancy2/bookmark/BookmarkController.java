@@ -74,7 +74,9 @@ public class BookmarkController  {
     }
 
     private String getEmail(Principal principal) {
-        return principal != null ? principal.getName() : "teste@email.com";
+        // Para reativar o JWT e ler o usuário autenticado pelo token, use a linha comentada abaixo:
+        return "teste@email.com";
+        // return principal != null ? principal.getName() : "teste@email.com";
     }
 
     private BookmarkResponse toResponse(Bookmark bookmark) {
