@@ -19,8 +19,7 @@ Uma **API RESTful** robusta e segura desenvolvida com **Java 21** e **Spring Boo
 
 A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagger UI)**. Nela, você pode visualizar todos os endpoints, schemas de retorno e fazer requisições de teste diretamente no navegador:
 
-👉 **URL do Swagger UI:** `https://sua-url-do-render.onrender.com/swagger-ui/index.html`  
-*(Substitua pela sua URL final gerada no Render)*
+👉 **URL do Swagger UI:** [https://links-de-estudo.onrender.com/swagger-ui/index.html](https://links-de-estudo.onrender.com/swagger-ui/index.html)
 
 > 💡 **Dica de Teste:** O Swagger suporta o fluxo completo. Cadastre um usuário em `/api/auth/register`, faça o login em `/api/auth/login`, copie o token gerado, clique no botão **"Authorize"** no topo da tela do Swagger, cole o token e teste os endpoints protegidos `/api/bookmarks/**`.
 
@@ -53,7 +52,7 @@ Abaixo estão trechos de código prontos demonstrando como fazer login na API e 
 
 ### 1. JavaScript (Fetch API / Frontend)
 ```javascript
-const API_URL = "https://sua-api.onrender.com";
+const API_URL = "https://links-de-estudo.onrender.com";
 
 // 1. Fazer login e salvar o Token JWT
 async function login(email, senha) {
@@ -89,7 +88,7 @@ async function obterBookmarks() {
 ```python
 import requests
 
-API_URL = "https://sua-api.onrender.com"
+API_URL = "https://links-de-estudo.onrender.com"
 
 # 1. Autenticar para obter o Token
 def obter_token(email, senha):
@@ -115,7 +114,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class ApiClient {
-    private static final String API_URL = "https://sua-api.onrender.com";
+    private static final String API_URL = "https://links-de-estudo.onrender.com";
 
     public static String fazerLogin(String email, String senha) throws Exception {
         String payload = String.format("{\"email\":\"%s\",\"senha\":\"%s\"}", email, senha);
