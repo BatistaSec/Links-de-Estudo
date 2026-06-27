@@ -28,7 +28,11 @@ A API conta com documentação interativa utilizando **Springdoc OpenAPI (Swagge
 > Para facilitar a avaliação por recrutadores e visitantes, as rotas de bookmarks `/api/bookmarks/**` estão configuradas em **modo permissivo** (abertas ao público sem necessidade de cabeçalhos ou tokens de login). Toda requisição anônima utilizará automaticamente um usuário de testes padrão (`teste@email.com`).
 > 
 > 🔒 **Demonstração de Segurança (JWT):**  
-> Toda a arquitetura de segurança (Spring Security 7, filtros de autenticação, geração e validação de tokens JWT) está **100% implementada** no código do projeto (no pacote `security`). Se você desejar ativar a obrigatoriedade de autenticação por JWT nas rotas no seu próprio fork, basta remover a linha `.requestMatchers("/api/bookmarks/**").permitAll()` do arquivo `SecuritySecurity.java`.
+> Toda a arquitetura de segurança (Spring Security 7, filtros de autenticação, geração e validação de tokens JWT) está **100% implementada** no código do projeto (no pacote `security`), mas por questões de facilidade de testes ela está comentada e desativada.  
+> Caso deseje ativar a autenticação obrigatória por JWT no seu fork:
+> 1. No arquivo `SecuritySecurity.java`, descomente a linha do filtro JWT: `.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)`.
+> 2. No arquivo `BookmarkController.java`, dentro do método `getEmail`, descomente a linha: `return principal.getName()`.
+> 3. No arquivo `SecuritySecurity.java`, configure as rotas protegidas (por exemplo, removendo a linha de liberação pública `/api/bookmarks/**`).
 
 ---
 
